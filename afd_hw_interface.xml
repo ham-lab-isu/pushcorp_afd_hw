@@ -1,0 +1,5 @@
+<library path="libafd_hardware_interface">
+  <class name="afd_hardware::AFDHW" type="afd_hardware::AFDHW" base_class_type="hardware_interface::SystemInterface">
+    <description>AFD Hardware Interface</description>
+  </class>
+</library>
