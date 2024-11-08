@@ -21,7 +21,7 @@ target_compile_features(afd_hardware_interface PUBLIC cxx_std_17)
 target_link_libraries(afd_hardware_interface yaml-cpp asio)
 
 # Register the library as a plugin
-pluginlib_export_plugin_description_file(hardware_interface afd_hardware_interface.xml)
+pluginlib_export_plugin_description_file(hardware_interface afd_hw_interface.xml)
 
 # Install the library
 install(TARGETS afd_hardware_interface
