@@ -5,7 +5,7 @@
 #include <string>
 #include <memory>
 #include <chrono>
-#include <asio.hpp>
+#include <boost/asio.hpp>
 
 namespace afd_hardware
 {
@@ -32,9 +32,9 @@ namespace afd_hardware
                 {
                     try
                     {
-                    asio::io_service io_service;
-                    asio::ip::tcp::endpoint endpoint(asio::ip::address::from_string(info.hardware_parameters["ip"]), std::stoi(info.hardware_parameters["port"]));
-                    socket_ = std::make_unique<asio::ip::tcp::socket>(io_service);
+                    boost::asio::io_service io_service;
+                    boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(info.hardware_parameters["ip"]), std::stoi(info.hardware_parameters["port"]));
+                    socket_ = std::make_unique<boost::asio::ip::tcp::socket>(io_service);
                     socket_->connect(endpoint);
                     }
                     catch(const std::exception& e)
@@ -85,7 +85,7 @@ namespace afd_hardware
                     try
                     {
                         std::vector<char> buffer(128);
-                        size_t len = socket_->read_some(asio::buffer(buffer));
+                        size_t len = socket_->read_some(boost::asio::buffer(buffer));
                         std::string data(buffer.begin(), buffer.begin() + len);
 
                         // Parse data to update force and position values (implement parseForce and parsePosition functions)
@@ -115,7 +115,7 @@ namespace afd_hardware
                     {
                         // Assume commands are formatted as "force:<value>,position:<value>"
                         std::string command = "force:" + std::to_string(command_force) + ",position:" + std::to_string(command_position);
-                        asio::write(*socket_, asio::buffer(command));
+                        boost::asio::write(*socket_, boost::asio::buffer(command));
 
                         // Uncomment for reponse
                         // RCLCPP_DEBUG(rclcpp::get_logger("AFDHardwareInterface"), "Sent command - %s", command.c_str());
@@ -132,7 +132,7 @@ namespace afd_hardware
             }
 
         private:
-            std::unique_ptr<asio::ip::tcp::socket> socket_;
+            std::unique_ptr<boost::asio::ip::tcp::socket> socket_;
 
             double parseForce(const std::string & data)
             {

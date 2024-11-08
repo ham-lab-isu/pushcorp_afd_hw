@@ -13,7 +13,7 @@ find_package(rclcpp REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(yaml-cpp REQUIRED)
-find_package(asio REQUIRED)  # Use Boost.Asio if asio package is unavailable
+find_package(Boost REQUIRED COMPONENTS system)  # Use Boost.Asio if asio package is unavailable
 
 # Add the library
 add_library(afd_hardware_interface SHARED src/afd_hardware_interface.cpp)
