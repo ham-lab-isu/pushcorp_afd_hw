@@ -17,6 +17,6 @@
 
   <export>
     <build_type>ament_cmake</build_type>
-    <pluginlib plugin_description_file>afd_hw/afd_hardware_interface.xml</pluginlib>
+    <pluginlib plugin_description_file>afd_hw/afd_hw_interface.xml</pluginlib>
   </export>
 </package>
