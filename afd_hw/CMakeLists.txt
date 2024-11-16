@@ -56,7 +56,8 @@ target_include_directories(afd_hw_rviz_plugin PRIVATE
 )
 
 # Ensure dependencies for RViz plugin are correctly specified
-ament_target_dependencies(afd_hw_rviz_plugin rclcpp rviz_common std_msgs)
+ament_target_dependencies(afd_hw_rviz_plugin rclcpp rviz_common rviz_rendering std_msgs)
+
 
 # Register the RViz plugin in pluginlib
 pluginlib_export_plugin_description_file(rviz_common src/pushcorp_afd_hw/afd_hw/src/rviz/plugins.xml)
