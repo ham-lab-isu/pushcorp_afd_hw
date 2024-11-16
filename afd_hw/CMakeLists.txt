@@ -37,7 +37,7 @@ if(EXISTS "${RVIZ_PLUGIN_SRC}")
   message(STATUS "Found RViz plugin source: ${RVIZ_PLUGIN_SRC}")
 
   # Add the RViz plugin library
-  add_library(afd_hw_rviz_plugin SHARED src/pushcorp_afd_hw/afd_hw/src/rviz/afd_hw_panel.cpp)
+  add_library(afd_hw_rviz_plugin SHARED src/rviz/afd_hw_panel.cpp)
 
   # Link against necessary Qt and RViz libraries
   target_link_libraries(afd_hw_rviz_plugin
