@@ -1,4 +1,5 @@
 #include "afd_hw_panel.hpp"
+
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QtCharts/QChartView>
@@ -18,59 +19,76 @@ AFDHWPanel::AFDHWPanel(QWidget *parent)
       current_afd_value(0.0),
       spinning_(true)
 {
-    std::cout << "Creating AFDHWPanel with Line Graph and Buttons..." << std::endl;
+    std::cout << "[AFDHWPanel] Initializing..." << std::endl;
 
-    // Setup Layout
+    // Layout Setup
     QVBoxLayout *layout = new QVBoxLayout();
 
-    // Setup the Line Graph (Chart)
+    // Chart Setup
+    setupChart(layout);
+
+    // Buttons Setup
+    setupButtons(layout);
+
+    setLayout(layout);
+
+    // Timer Setup
+    connect(timer, &QTimer::timeout, this, &AFDHWPanel::updateGraph);
+    timer->start(100); // 0.1 seconds
+
+    // ROS2 Node Setup
+    setupRos2Node();
+}
+
+AFDHWPanel::~AFDHWPanel()
+{
+    std::cout << "[AFDHWPanel] Shutting down..." << std::endl;
+
+    spinning_ = false;
+    if (ros_thread_.joinable())
+    {
+        ros_thread_.join();
+    }
+}
+
+void AFDHWPanel::setupChart(QVBoxLayout *layout)
+{
     chart->addSeries(series);
     chart->createDefaultAxes();
     chart->setTitle("AFD Data Visualization");
 
-    QtCharts::QChartView *chart_view = new QtCharts::QChartView(chart);
+    auto *chart_view = new QtCharts::QChartView(chart);
     chart_view->setRenderHint(QPainter::Antialiasing);
 
     layout->addWidget(chart_view);
+}
 
-    // Add four buttons
+void AFDHWPanel::setupButtons(QVBoxLayout *layout)
+{
     for (int i = 0; i < 4; ++i)
     {
         QPushButton *button = new QPushButton("Button " + QString::number(i + 1));
         connect(button, &QPushButton::clicked, this, [this, i]() { onButtonClicked(i); });
         layout->addWidget(button);
     }
+}
 
-    setLayout(layout);
-
-    // Setup Timer for updating graph
-    connect(timer, &QTimer::timeout, this, &AFDHWPanel::updateGraph);
-    timer->start(100); // 0.1 seconds
-
-    // Subscribe to AFD data topic
+void AFDHWPanel::setupRos2Node()
+{
     node_ = rclcpp::Node::make_shared("afd_hw_panel_node");
+
     subscription_ = node_->create_subscription<std_msgs::msg::Float32>(
         "afd_data_topic", 10, std::bind(&AFDHWPanel::afdDataCallback, this, std::placeholders::_1));
 
-    // Run the ROS2 spinning in a separate thread
     ros_thread_ = std::thread([this]() {
         rclcpp::executors::SingleThreadedExecutor executor;
         executor.add_node(node_);
         while (spinning_)
         {
-            executor.spin_some(); // Non-blocking to allow graceful shutdown
+            executor.spin_some(); // Non-blocking for graceful shutdown
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     });
-}
-
-AFDHWPanel::~AFDHWPanel()
-{
-    spinning_ = false;
-    if (ros_thread_.joinable())
-    {
-        ros_thread_.join();
-    }
 }
 
 void AFDHWPanel::updateGraph()
@@ -84,19 +102,21 @@ void AFDHWPanel::updateGraph()
     }
 
     chart->axes(Qt::Horizontal).first()->setRange(x_value - 10, x_value);
-    chart->axes(Qt::Vertical).first()->setRange(-10, 10); // Adjust based on expected AFD value range
+    chart->axes(Qt::Vertical).first()->setRange(-10, 10); // Adjust based on expected value range
 }
 
 void AFDHWPanel::onButtonClicked(int button_index)
 {
-    std::cout << "Button " << button_index + 1 << " clicked!" << std::endl;
+    std::cout << "[AFDHWPanel] Button " << button_index + 1 << " clicked!" << std::endl;
 }
 
 void AFDHWPanel::afdDataCallback(const std_msgs::msg::Float32::SharedPtr msg)
 {
     current_afd_value = msg->data;
+    std::cout << "[AFDHWPanel] AFD Data Received: " << current_afd_value << std::endl;
 }
 
 } // namespace afd_rviz_plugin
 
+// Register the plugin
 PLUGINLIB_EXPORT_CLASS(afd_rviz_plugin::AFDHWPanel, rviz_common::Panel)
