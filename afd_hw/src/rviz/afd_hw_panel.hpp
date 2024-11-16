@@ -2,11 +2,11 @@
 #define AFD_HW_PANEL_HPP
 
 #include <rviz_common/panel.hpp>
-#include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/float32.hpp>
+#include <QTimer>
 #include <QtCharts/QChart>
 #include <QtCharts/QLineSeries>
-#include <QTimer>
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/float32.hpp>
 #include <thread>
 #include <atomic>
 
@@ -17,7 +17,7 @@ class AFDHWPanel : public rviz_common::Panel
     Q_OBJECT
 public:
     explicit AFDHWPanel(QWidget *parent = nullptr);
-    ~AFDHWPanel() override;
+    ~AFDHWPanel();
 
 private Q_SLOTS:
     void updateGraph();
