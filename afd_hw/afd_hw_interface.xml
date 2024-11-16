@@ -1,0 +1,9 @@
+<library path="libafd_hw">
+  <class name="afd_hardware::AFDHW"
+         type="afd_hardware::AFDHW"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      AFD hardware interface for ros2_control.
+    </description>
+  </class>
+</library>
