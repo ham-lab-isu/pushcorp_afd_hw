@@ -2,6 +2,7 @@
 #define AFD_HW_PANEL_HPP
 
 #include <rviz_common/panel.hpp>
+#include <QVBoxLayout>
 #include <QTimer>
 #include <QtCharts/QChart>
 #include <QtCharts/QLineSeries>
@@ -17,7 +18,11 @@ class AFDHWPanel : public rviz_common::Panel
     Q_OBJECT
 public:
     explicit AFDHWPanel(QWidget *parent = nullptr);
-    ~AFDHWPanel() override;
+    ~AFDHWPanel();
+
+private:
+    void setupChart(QVBoxLayout* layout);  // Fix: Add correct parameter type
+    void setupButtons(QVBoxLayout* layout); // Fix: Add correct parameter type
 
 private Q_SLOTS:
     void updateGraph();
@@ -25,8 +30,6 @@ private Q_SLOTS:
 
 private:
     void afdDataCallback(const std_msgs::msg::Float32::SharedPtr msg);
-    void setupChart(QVBoxLayout *layout);
-    void setupButtons(QVBoxLayout *layout);
 
     QtCharts::QChart *chart;
     QtCharts::QLineSeries *series;

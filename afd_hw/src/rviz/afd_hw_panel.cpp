@@ -1,13 +1,10 @@
 #include "afd_hw_panel.hpp"
-#include <QVBoxLayout>
 #include <QPushButton>
 #include <QtCharts/QChartView>
 #include <iostream>
-#include <pluginlib/class_list_macros.hpp>
 
 namespace afd_rviz_plugin
 {
-
 AFDHWPanel::AFDHWPanel(QWidget *parent)
     : rviz_common::Panel(parent),
       chart(new QtCharts::QChart),
@@ -19,22 +16,18 @@ AFDHWPanel::AFDHWPanel(QWidget *parent)
 {
     std::cout << "Creating AFDHWPanel with Line Graph and Buttons..." << std::endl;
 
-    // Setup Layout
     QVBoxLayout *layout = new QVBoxLayout();
-    setupChart(layout);
-    setupButtons(layout);
+    setupChart(layout);  // Fix: Call method with correct argument
+    setupButtons(layout); // Fix: Call method with correct argument
     setLayout(layout);
 
-    // Setup Timer for updating graph
     connect(timer, &QTimer::timeout, this, &AFDHWPanel::updateGraph);
-    timer->start(100); // 0.1 seconds
+    timer->start(100);
 
-    // Subscribe to AFD data topic
     node_ = rclcpp::Node::make_shared("afd_hw_panel_node");
     subscription_ = node_->create_subscription<std_msgs::msg::Float32>(
         "afd_data_topic", 10, std::bind(&AFDHWPanel::afdDataCallback, this, std::placeholders::_1));
 
-    // Run the ROS2 spinning in a separate thread
     ros_thread_ = std::thread([this]() {
         rclcpp::executors::SingleThreadedExecutor executor;
         executor.add_node(node_);
@@ -55,7 +48,7 @@ AFDHWPanel::~AFDHWPanel()
     }
 }
 
-void AFDHWPanel::setupChart(QVBoxLayout *layout)
+void AFDHWPanel::setupChart(QVBoxLayout* layout)  // Fix: Match declaration
 {
     chart->addSeries(series);
     chart->createDefaultAxes();
@@ -63,15 +56,14 @@ void AFDHWPanel::setupChart(QVBoxLayout *layout)
 
     auto *chart_view = new QtCharts::QChartView(chart);
     chart_view->setRenderHint(QPainter::Antialiasing);
-
     layout->addWidget(chart_view);
 }
 
-void AFDHWPanel::setupButtons(QVBoxLayout *layout)
+void AFDHWPanel::setupButtons(QVBoxLayout* layout)  // Fix: Match declaration
 {
     for (int i = 0; i < 4; ++i)
     {
-        auto *button = new QPushButton("Button " + QString::number(i + 1));
+        QPushButton *button = new QPushButton("Button " + QString::number(i + 1));
         connect(button, &QPushButton::clicked, this, [this, i]() { onButtonClicked(i); });
         layout->addWidget(button);
     }
@@ -88,7 +80,7 @@ void AFDHWPanel::updateGraph()
     }
 
     chart->axes(Qt::Horizontal).first()->setRange(x_value - 10, x_value);
-    chart->axes(Qt::Vertical).first()->setRange(-10, 10); // Adjust based on expected AFD value range
+    chart->axes(Qt::Vertical).first()->setRange(-10, 10);
 }
 
 void AFDHWPanel::onButtonClicked(int button_index)
@@ -102,5 +94,3 @@ void AFDHWPanel::afdDataCallback(const std_msgs::msg::Float32::SharedPtr msg)
 }
 
 } // namespace afd_rviz_plugin
-
-PLUGINLIB_EXPORT_CLASS(afd_rviz_plugin::AFDHWPanel, rviz_common::Panel)
