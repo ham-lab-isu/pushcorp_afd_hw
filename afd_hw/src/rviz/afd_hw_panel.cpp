@@ -8,6 +8,8 @@
 #include <iostream>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float32.hpp>
+#include <pluginlib/class_list_macros.hpp>
+#include "afd_hw_panel.hpp"
 
 namespace afd_rviz_plugin
 {
