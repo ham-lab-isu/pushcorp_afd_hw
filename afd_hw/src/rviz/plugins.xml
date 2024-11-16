@@ -1,0 +1,7 @@
+<library path="libafd_hw_rviz_plugin">
+  <class name="afd_rviz_plugin/AFDHWPanel" type="afd_rviz_plugin::AFDHWPanel" base_class_type="rviz_common::Panel">
+    <description>
+      A panel to visualize and interact with AFD hardware data in RViz.
+    </description>
+  </class>
+</library>
