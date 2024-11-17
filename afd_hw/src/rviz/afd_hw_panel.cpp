@@ -1,7 +1,11 @@
-#include "afd_hw_panel.hpp"
+#include <QVBoxLayout>
+#include <QtCharts/QChart>
+#include <QtCharts/QLineSeries>
+#include <QTimer>
 #include <QPushButton>
-#include <QtCharts/QChartView>
-#include <iostream>
+#include <pluginlib/class_list_macros.hpp>
+#include <std_msgs/msg/float32.hpp>
+#include "afd_hw_panel.hpp"
 
 namespace afd_rviz_plugin
 {
